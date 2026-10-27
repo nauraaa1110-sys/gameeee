@@ -1,0 +1,769 @@
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif MTs DDI Kel Baru</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font Inter / Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.96) translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 35px 5px rgba(139, 92, 246, 0.5);
+            }
+        }
+
+        .animate-card {
+            animation: fadeInScale 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .glow-effect {
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        .option-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option-card:hover:not(.selected) {
+            transform: translateX(4px);
+            background-color: rgba(30, 41, 59, 0.8);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .option-card.selected {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(124, 58, 237, 0.25));
+            border-color: rgba(129, 140, 248, 0.8);
+            box-shadow: 0 0 20px -3px rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+    <!-- Glowing background blur decorations -->
+    <div class="fixed top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-indigo-600/15 blur-[120px] pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-purple-600/15 blur-[120px] pointer-events-none"></div>
+
+    <!-- Header -->
+    <header class="w-full py-4 px-4 md:px-8 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3.5 cursor-pointer" onclick="goHome()">
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-graduation-cap text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-base md:text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">MTs DDI Kel Baru</h1>
+                    <p class="text-xs text-slate-400">Platform Kuis Interaktif</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <div id="timer-badge" class="hidden items-center space-x-2 bg-slate-900/90 px-3.5 py-1.5 rounded-full border border-slate-700/80 text-xs font-semibold text-indigo-400 shadow-inner">
+                    <i class="fa-regular fa-clock text-indigo-400"></i>
+                    <span id="timer-text">00:00</span>
+                </div>
+                <div id="role-badge" class="hidden items-center space-x-2 bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/30 text-xs font-bold text-indigo-300">
+                    <i id="role-icon" class="fa-solid fa-user"></i>
+                    <span id="role-text">Peserta</span>
+                </div>
+                <button id="logout-btn" onclick="goHome()" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl mx-auto px-4 py-8 md:py-10 flex-grow flex items-center justify-center relative z-10">
+        
+        <!-- Welcome & Role Selection Screen -->
+        <div id="welcome-screen" class="w-full max-w-2xl bg-slate-900/60 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 md:p-12 shadow-2xl text-center glow-effect animate-card">
+            <div class="inline-flex p-5 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 text-indigo-400 rounded-3xl mb-4 border border-indigo-500/20 shadow-inner">
+                <i class="fa-solid fa-school text-5xl"></i>
+            </div>
+            
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-2 tracking-tight bg-gradient-to-r from-white via-indigo-100 to-slate-300 bg-clip-text text-transparent">
+                Selamat Datang di Quiz Interaktif
+            </h2>
+            <h3 class="text-lg md:text-xl font-bold text-indigo-400 mb-4">
+                MTs DDI Kel Baru
+            </h3>
+            
+            <p class="text-slate-400 text-sm md:text-base mb-8 max-w-lg mx-auto leading-relaxed">
+                Silakan pilih peran Anda untuk melanjutkan. Peserta dapat mengerjakan kuis secara acak, dan Admin dapat mengelola bank soal kuis.
+            </p>
+
+            <!-- Role Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+                <button onclick="startQuizAsStudent()" class="p-5 bg-slate-900 border border-indigo-500/30 hover:border-indigo-500/80 rounded-2xl text-left transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center mb-3 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-user-graduate text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-1">Masuk Peserta</h4>
+                    <p class="text-xs text-slate-400">Mulai mengerjakan kuis interaktif acak.</p>
+                </button>
+
+                <button onclick="openAdminDashboard()" class="p-5 bg-slate-900 border border-purple-500/30 hover:border-purple-500/80 rounded-2xl text-left transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600/20 text-purple-400 border border-purple-500/30 flex items-center justify-center mb-3 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-user-gear text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-1">Masuk Admin</h4>
+                    <p class="text-xs text-slate-400">Tambah, hapus & kelola daftar soal kuis.</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen (Peserta) -->
+        <div id="quiz-screen" class="w-full hidden">
+            <!-- Progress Bar & Indicator -->
+            <div class="mb-6 space-y-2">
+                <div class="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
+                    <span id="progress-text">Soal 1 dari 5</span>
+                    <span id="answered-status" class="text-indigo-400 font-medium bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20">Belum dipilih</span>
+                </div>
+                <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800 p-0.5">
+                    <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full w-0 transition-all duration-500 ease-out"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="question-card" class="bg-slate-900/60 backdrop-blur-2xl border border-slate-800/90 rounded-3xl p-6 md:p-8 shadow-2xl animate-card">
+                <div class="flex items-start space-x-3 mb-6">
+                    <span id="question-number-badge" class="px-3 py-1 bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 text-xs font-bold rounded-lg mt-0.5">Q1</span>
+                    <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-100 leading-snug">
+                        <!-- Pertanyaan dimuat via JS -->
+                    </h3>
+                </div>
+
+                <!-- Options List -->
+                <div id="options-container" class="space-y-3.5 mb-8">
+                    <!-- Pilihan opsi dimuat via JS -->
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex items-center justify-between pt-5 border-t border-slate-800/80">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl border border-slate-700/60 transition-all duration-200 flex items-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                        <span>Sebelumnya</span>
+                    </button>
+
+                    <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-200 flex items-center space-x-2">
+                        <span id="next-btn-text">Selanjutnya</span>
+                        <i id="next-btn-icon" class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="w-full hidden space-y-8 animate-card">
+            <!-- Summary Header Card -->
+            <div class="bg-slate-900/60 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center glow-effect">
+                <div id="result-icon-container" class="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-5 shadow-xl">
+                    <!-- Icon hasil dimuat via JS -->
+                </div>
+                <h2 id="result-title" class="text-2xl md:text-3xl font-extrabold mb-2 tracking-tight">Kuis Selesai!</h2>
+                <p id="result-subtitle" class="text-slate-400 text-sm md:text-base mb-6">Berikut adalah rangkuman performa Anda.</p>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-xl mx-auto mb-8">
+                    <div class="bg-slate-950/70 border border-slate-800/80 p-4 rounded-2xl">
+                        <span class="text-xs font-semibold text-slate-400 block mb-1">Skor Akhir</span>
+                        <span id="stat-score" class="text-2xl md:text-3xl font-black text-indigo-400">0</span>
+                    </div>
+                    <div class="bg-slate-950/70 border border-slate-800/80 p-4 rounded-2xl">
+                        <span class="text-xs font-semibold text-slate-400 block mb-1">Akurasi</span>
+                        <span id="stat-accuracy" class="text-2xl md:text-3xl font-black text-purple-400">0%</span>
+                    </div>
+                    <div class="bg-slate-950/70 border border-emerald-500/20 p-4 rounded-2xl">
+                        <span class="text-xs font-semibold text-emerald-400 block mb-1">Benar</span>
+                        <span id="stat-correct" class="text-2xl md:text-3xl font-black text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-950/70 border border-rose-500/20 p-4 rounded-2xl">
+                        <span class="text-xs font-semibold text-rose-400 block mb-1">Salah</span>
+                        <span id="stat-wrong" class="text-2xl md:text-3xl font-black text-rose-400">0</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="restartQuiz()" class="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Ulangi Kuis (Acak Ulang)</span>
+                    </button>
+                    <button onclick="goHome()" class="w-full sm:w-auto px-7 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl border border-slate-700 transition duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Kembali ke Halaman Utama</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Review Answers Accordion/List -->
+            <div class="bg-slate-900/60 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl">
+                <h3 class="text-lg font-bold text-slate-100 mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-list-check text-indigo-400"></i>
+                    <span>Pembahasan & Kunci Jawaban Akhir</span>
+                </h3>
+                <div id="review-container" class="space-y-4">
+                    <!-- Dimuat secara dinamis via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Screen -->
+        <div id="admin-screen" class="w-full hidden space-y-6 animate-card">
+            <!-- Admin Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between bg-slate-900/60 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 shadow-2xl gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-purple-400"></i>
+                        Dashboard Kelola Soal Quiz
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Total Soal Saat Ini: <span id="admin-total-questions" class="text-indigo-400 font-bold">0</span> Soal</p>
+                </div>
+                <button onclick="openAddQuestionModal()" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl shadow-lg shadow-purple-600/20 transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Tambah Soal Baru</span>
+                </button>
+            </div>
+
+            <!-- Question List Management -->
+            <div class="bg-slate-900/60 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 shadow-2xl">
+                <h3 class="text-base font-bold text-slate-200 mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-database text-purple-400"></i>
+                    <span>Daftar Bank Soal</span>
+                </h3>
+                <div id="admin-question-list" class="space-y-4">
+                    <!-- Dimuat secara dinamis via JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Form Tambah Soal (Admin) -->
+    <div id="add-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 max-w-xl w-full shadow-2xl space-y-5 animate-card max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-square-plus text-indigo-400"></i>
+                    Tambah Soal Kuis Baru
+                </h3>
+                <button onclick="closeAddQuestionModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="add-question-form" onsubmit="saveNewQuestion(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Pertanyaan</label>
+                    <textarea id="modal-question-text" required rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition" placeholder="Masukkan Teks Pertanyaan..."></textarea>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Pilihan Opsi & Jawaban Benar</label>
+                    
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" name="correct_opt" value="0" required class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-700 bg-slate-950">
+                        <input type="text" id="opt-0" required class="flex-grow bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500" placeholder="Opsi A">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" name="correct_opt" value="1" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-700 bg-slate-950">
+                        <input type="text" id="opt-1" required class="flex-grow bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500" placeholder="Opsi B">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" name="correct_opt" value="2" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-700 bg-slate-950">
+                        <input type="text" id="opt-2" required class="flex-grow bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500" placeholder="Opsi C">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" name="correct_opt" value="3" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-700 bg-slate-950">
+                        <input type="text" id="opt-3" required class="flex-grow bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500" placeholder="Opsi D">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" name="correct_opt" value="4" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-700 bg-slate-950">
+                        <input type="text" id="opt-4" required class="flex-grow bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500" placeholder="Opsi E">
+                    </div>
+                    <p class="text-[11px] text-slate-500">* Pilih salah satu tombol bundar (radio button) di sebelah opsi untuk menentukan jawaban yang benar.</p>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeAddQuestionModal()" class="px-4 py-2 bg-slate-800 text-slate-300 text-sm font-semibold rounded-xl hover:bg-slate-700 transition">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-500 shadow-md shadow-indigo-600/30 transition">Simpan Soal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-msg" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-4 py-3 rounded-2xl shadow-2xl text-sm font-semibold flex items-center space-x-2 transition-all duration-300 transform translate-y-20 opacity-0 z-50">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-text">Berhasil!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full py-5 text-center text-xs text-slate-500 border-t border-slate-900 bg-slate-950/40 relative z-10">
+        <p>&copy; 2026 MTs DDI Kel Baru. Sistem Kuis Interaktif & Pengelolaan Soal.</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Mentah Soal (Default Master Bank)
+        let masterQuestions = [
+            {
+                id: 1,
+                question: "Apa kepanjangan dari AI dalam bidang ilmu komputer?",
+                options: [
+                    "Automated Intelligence",
+                    "Artificial Integration",
+                    "Artificial Intelligence",
+                    "Advanced Information",
+                    "Automated Interaction"
+                ],
+                correctAnswer: "Artificial Intelligence"
+            },
+            {
+                id: 2,
+                question: "Cabang dari kecerdasan buatan yang memungkinkan komputer untuk belajar dari data tanpa diprogram secara eksplisit disebut...",
+                options: [
+                    "Machine Learning",
+                    "Cloud Computing",
+                    "Quantum Computing",
+                    "Data Mining",
+                    "Cryptography"
+                ],
+                correctAnswer: "Machine Learning"
+            },
+            {
+                id: 3,
+                question: "Manakah dari bahasa pemrograman berikut yang paling sering digunakan dalam pengembangan proyek Machine Learning dan AI karena pustakanya (libraries) yang kaya seperti TensorFlow dan PyTorch?",
+                options: [
+                    "HTML",
+                    "Python",
+                    "CSS",
+                    "SQL",
+                    "PHP"
+                ],
+                correctAnswer: "Python"
+            },
+            {
+                id: 4,
+                question: "Apa fungsi utama dari teknologi Natural Language Processing (NLP) dalam AI?",
+                options: [
+                    "Mengenali objek dan wajah dalam sebuah gambar digital",
+                    "Memproses, menganalisis, dan memahami bahasa manusia baik teks maupun suara",
+                    "Mengamankan jaringan komputer dari serangan siber",
+                    "Menyimpan data berkapasitas besar dalam cloud",
+                    "Mengoptimalkan kecepatan pemrosesan kartu grafis (GPU)"
+                ],
+                correctAnswer: "Memproses, menganalisis, dan memahami bahasa manusia baik teks maupun suara"
+            },
+            {
+                id: 5,
+                question: "Teknologi jaringan terdesentralisasi yang dikenal sebagai dasar dari mata uang kripto dan pencatatan transaksi yang aman adalah...",
+                options: [
+                    "Internet of Things (IoT)",
+                    "Big Data",
+                    "Blockchain",
+                    "Virtual Reality (VR)",
+                    "Edge Computing"
+                ],
+                correctAnswer: "Blockchain"
+            }
+        ];
+
+        let quizQuestions = [];
+        let userAnswers = [];
+        let currentQuestionIndex = 0;
+        let timerInterval;
+        let secondsElapsed = 0;
+
+        // Utility: Acak array (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-msg');
+            document.getElementById('toast-text').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function goHome() {
+            clearInterval(timerInterval);
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.add('hidden');
+            
+            document.getElementById('timer-badge').classList.add('hidden');
+            document.getElementById('timer-badge').classList.remove('flex');
+            document.getElementById('role-badge').classList.add('hidden');
+            document.getElementById('role-badge').classList.remove('flex');
+            document.getElementById('logout-btn').classList.add('hidden');
+        }
+
+        // ---------- MODUL PESERTA ---------- //
+
+        function startQuizAsStudent() {
+            if (masterQuestions.length === 0) {
+                alert("Bank soal saat ini kosong. Silakan masuk sebagai Admin untuk menambahkan soal.");
+                return;
+            }
+
+            // Set Header Role
+            document.getElementById('role-text').innerText = "Peserta";
+            document.getElementById('role-icon').className = "fa-solid fa-user-graduate";
+            document.getElementById('role-badge').classList.remove('hidden');
+            document.getElementById('role-badge').classList.add('flex');
+            document.getElementById('logout-btn').classList.remove('hidden');
+
+            // Acak urutan nomor soal dan pilihan jawaban
+            quizQuestions = shuffleArray(masterQuestions).map(q => {
+                return {
+                    question: q.question,
+                    options: shuffleArray(q.options),
+                    correctAnswer: q.correctAnswer
+                };
+            });
+
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            currentQuestionIndex = 0;
+            secondsElapsed = 0;
+
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            const timerBadge = document.getElementById('timer-badge');
+            timerBadge.classList.remove('hidden');
+            timerBadge.classList.add('flex');
+
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                let mins = Math.floor(secondsElapsed / 60);
+                let secs = secondsElapsed % 60;
+                document.getElementById('timer-text').innerText = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            const currentQ = quizQuestions[currentQuestionIndex];
+            const card = document.getElementById('question-card');
+            
+            // Re-trigger animation
+            card.classList.remove('animate-card');
+            void card.offsetWidth;
+            card.classList.add('animate-card');
+
+            // Update Header & Progress
+            document.getElementById('progress-text').innerText = `Soal ${currentQuestionIndex + 1} dari ${quizQuestions.length}`;
+            document.getElementById('question-number-badge').innerText = `Q${currentQuestionIndex + 1}`;
+            
+            const progressPercent = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Status Jawaban Saat Ini
+            const answeredStatus = document.getElementById('answered-status');
+            if (userAnswers[currentQuestionIndex] !== null) {
+                answeredStatus.innerText = "Terjawab";
+                answeredStatus.className = "text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20";
+            } else {
+                answeredStatus.innerText = "Belum dipilih";
+                answeredStatus.className = "text-indigo-400 font-medium bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20";
+            }
+
+            document.getElementById('question-text').innerText = currentQ.question;
+
+            // Load Pilihan Opsi
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            currentQ.options.forEach((optionText, idx) => {
+                const isSelected = (userAnswers[currentQuestionIndex] === optionText);
+                const btn = document.createElement('button');
+                
+                btn.className = `option-card w-full text-left p-4 rounded-2xl bg-slate-900/90 border border-slate-800 text-slate-200 font-medium flex items-center justify-between group cursor-pointer ${isSelected ? 'selected' : ''}`;
+                
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3.5 pointer-events-none">
+                        <span class="w-8 h-8 rounded-xl ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-800 border border-slate-700 text-slate-400'} flex items-center justify-center text-xs font-bold transition-colors group-hover:border-indigo-500/60 group-hover:text-indigo-300">
+                            ${String.fromCharCode(65 + idx)}
+                        </span>
+                        <span class="text-sm md:text-base ${isSelected ? 'text-white font-semibold' : ''}">${optionText}</span>
+                    </div>
+                    <div class="option-radio w-5 h-5 rounded-full border ${isSelected ? 'border-indigo-400 bg-indigo-500' : 'border-slate-700'} flex items-center justify-center transition-all">
+                        ${isSelected ? '<div class="w-2 h-2 rounded-full bg-white"></div>' : ''}
+                    </div>
+                `;
+
+                btn.onclick = () => selectOption(optionText);
+                optionsContainer.appendChild(btn);
+            });
+
+            // State Tombol Navigasi
+            const prevBtn = document.getElementById('prev-btn');
+            prevBtn.disabled = (currentQuestionIndex === 0);
+
+            const nextBtnText = document.getElementById('next-btn-text');
+            const nextBtnIcon = document.getElementById('next-btn-icon');
+
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                nextBtnText.innerText = "Selesaikan Kuis";
+                nextBtnIcon.className = "fa-solid fa-check text-xs";
+            } else {
+                nextBtnText.innerText = "Selanjutnya";
+                nextBtnIcon.className = "fa-solid fa-chevron-right text-xs";
+            }
+        }
+
+        function selectOption(optionText) {
+            userAnswers[currentQuestionIndex] = optionText;
+            loadQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('timer-badge').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let correctCount = 0;
+            quizQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correctAnswer) {
+                    correctCount++;
+                }
+            });
+
+            const wrongCount = quizQuestions.length - correctCount;
+            const score = Math.round((correctCount / quizQuestions.length) * 100);
+
+            document.getElementById('stat-score').innerText = `${score}`;
+            document.getElementById('stat-accuracy').innerText = `${score}%`;
+            document.getElementById('stat-correct').innerText = `${correctCount}`;
+            document.getElementById('stat-wrong').innerText = `${wrongCount}`;
+
+            const iconContainer = document.getElementById('result-icon-container');
+            const resultTitle = document.getElementById('result-title');
+            const resultSubtitle = document.getElementById('result-subtitle');
+
+            if (score === 100) {
+                iconContainer.className = "w-20 h-20 mx-auto rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-5 shadow-lg text-4xl";
+                iconContainer.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+                resultTitle.innerText = "Sempurna! Luar Biasa!";
+                resultSubtitle.innerText = "Selamat, Anda berhasil menjawab seluruh pertanyaan dengan benar.";
+            } else if (score >= 60) {
+                iconContainer.className = "w-20 h-20 mx-auto rounded-3xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mb-5 shadow-lg text-4xl";
+                iconContainer.innerHTML = '<i class="fa-solid fa-award"></i>';
+                resultTitle.innerText = "Kerja Bagus!";
+                resultSubtitle.innerText = "Pemahaman Anda dalam kuis ini sudah cukup baik.";
+            } else {
+                iconContainer.className = "w-20 h-20 mx-auto rounded-3xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-5 shadow-lg text-4xl";
+                iconContainer.innerHTML = '<i class="fa-solid fa-book-open"></i>';
+                resultTitle.innerText = "Tetap Semangat!";
+                resultSubtitle.innerText = "Tinjau jawaban Anda di bawah untuk mempelajari kunci jawaban.";
+            }
+
+            // Render Review Kunci Jawaban Akhir
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+
+            quizQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = (userAns === q.correctAnswer);
+
+                const item = document.createElement('div');
+                item.className = `p-5 rounded-2xl border ${isCorrect ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-rose-950/20 border-rose-500/30'} space-y-3`;
+
+                item.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Soal ${idx + 1}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${isCorrect ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+                            ${isCorrect ? '<i class="fa-solid fa-check mr-1"></i> Benar' : '<i class="fa-solid fa-xmark mr-1"></i> Salah'}
+                        </span>
+                    </div>
+                    <h4 class="text-slate-200 font-semibold text-sm md:text-base">${q.question}</h4>
+                    <div class="space-y-1.5 text-xs md:text-sm pt-2 border-t border-slate-800/80">
+                        <div class="flex items-center space-x-2 ${isCorrect ? 'text-emerald-400' : 'text-rose-400'} font-medium">
+                            <span class="text-slate-400 w-28">Jawaban Anda:</span>
+                            <span>${userAns ? userAns : '<i>(Tidak dijawab)</i>'}</span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="flex items-center space-x-2 text-emerald-400 font-medium">
+                                <span class="text-slate-400 w-28">Kunci Jawaban:</span>
+                                <span>${q.correctAnswer}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                reviewContainer.appendChild(item);
+            });
+        }
+
+        function restartQuiz() {
+            startQuizAsStudent();
+        }
+
+        // ---------- MODUL ADMIN ---------- //
+
+        function openAdminDashboard() {
+            document.getElementById('role-text').innerText = "Admin";
+            document.getElementById('role-icon').className = "fa-solid fa-user-gear";
+            document.getElementById('role-badge').classList.remove('hidden');
+            document.getElementById('role-badge').classList.add('flex');
+            document.getElementById('logout-btn').classList.remove('hidden');
+
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.remove('hidden');
+
+            renderAdminQuestions();
+        }
+
+        function renderAdminQuestions() {
+            document.getElementById('admin-total-questions').innerText = masterQuestions.length;
+            const container = document.getElementById('admin-question-list');
+            container.innerHTML = '';
+
+            if (masterQuestions.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-500 text-sm">Belum ada soal kuis. Klik "Tambah Soal Baru" di atas.</div>`;
+                return;
+            }
+
+            masterQuestions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-950/70 border border-slate-800 rounded-2xl p-5 space-y-3 relative group hover:border-slate-700 transition";
+
+                let optionsHtml = q.options.map((opt) => {
+                    const isCorrect = opt === q.correctAnswer;
+                    return `
+                        <li class="text-xs flex items-center space-x-2 ${isCorrect ? 'text-emerald-400 font-semibold' : 'text-slate-400'}">
+                            <i class="${isCorrect ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-regular fa-circle text-slate-600'}"></i>
+                            <span>${opt} ${isCorrect ? '(Kunci Jawaban)' : ''}</span>
+                        </li>
+                    `;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">Soal #${idx + 1}</span>
+                            <h4 class="text-slate-100 font-semibold text-sm md:text-base pt-1">${q.question}</h4>
+                        </div>
+                        <button onclick="deleteQuestion(${q.id})" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 p-2 rounded-xl transition border border-rose-500/20" title="Hapus Soal">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                    </div>
+                    <ul class="space-y-1.5 pt-2 border-t border-slate-900">
+                        ${optionsHtml}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAddQuestionModal() {
+            document.getElementById('add-question-form').reset();
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        function closeAddQuestionModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+        }
+
+        function saveNewQuestion(e) {
+            e.preventDefault();
+            
+            const questionText = document.getElementById('modal-question-text').value.trim();
+            const opts = [
+                document.getElementById('opt-0').value.trim(),
+                document.getElementById('opt-1').value.trim(),
+                document.getElementById('opt-2').value.trim(),
+                document.getElementById('opt-3').value.trim(),
+                document.getElementById('opt-4').value.trim()
+            ];
+
+            const selectedRadio = document.querySelector('input[name="correct_opt"]:checked');
+            if (!selectedRadio) {
+                alert("Silakan pilih salah satu opsi sebagai Kunci Jawaban yang benar!");
+                return;
+            }
+
+            const correctIdx = parseInt(selectedRadio.value);
+            const correctAnswer = opts[correctIdx];
+
+            const newQ = {
+                id: Date.now(),
+                question: questionText,
+                options: opts,
+                correctAnswer: correctAnswer
+            };
+
+            masterQuestions.push(newQ);
+            closeAddQuestionModal();
+            renderAdminQuestions();
+            showToast("Soal baru berhasil ditambahkan!");
+        }
+
+        function deleteQuestion(id) {
+            masterQuestions = masterQuestions.filter(q => q.id !== id);
+            renderAdminQuestions();
+            showToast("Soal berhasil dihapus!");
+        }
+    </script>
+</body>
+</html>
